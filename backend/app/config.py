@@ -30,7 +30,7 @@ class PaymentPlan:
 
 
 class Settings:
-    app_name = "HomeVision API"
+    app_name = "Room Vision API"
     version = "1.0.0"
     frontend_origin = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000")
     backend_public_url = os.getenv("BACKEND_PUBLIC_URL", "http://localhost:8000").rstrip("/")
@@ -40,13 +40,13 @@ class Settings:
 
     database_url = os.getenv(
         "DATABASE_URL",
-        f"sqlite:///{(DATA_DIR / 'homevision.db').as_posix()}",
+        f"sqlite:///{(DATA_DIR / 'roomvision.db').as_posix()}",
     )
 
     jwt_secret = os.getenv("JWT_SECRET", "dev-only-change-me")
     jwt_algorithm = "HS256"
     access_token_expiry_hours = int(os.getenv("ACCESS_TOKEN_EXPIRY_HOURS", "168"))
-    session_cookie_name = os.getenv("SESSION_COOKIE_NAME", "homevision_session")
+    session_cookie_name = os.getenv("SESSION_COOKIE_NAME", "roomvision_session")
     cookie_secure = _bool_env("COOKIE_SECURE", False)
     cookie_samesite = os.getenv("COOKIE_SAMESITE", "lax")
 

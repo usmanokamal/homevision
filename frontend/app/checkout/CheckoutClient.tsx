@@ -82,7 +82,7 @@ export default function CheckoutClient({
       }
 
       setStatus(
-        "Paddle Checkout should open automatically. Complete payment to return to HomeVision."
+        "Paddle Checkout should open automatically. Complete payment to return to Room Vision."
       );
     } catch (error) {
       const message =

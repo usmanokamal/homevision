@@ -14,7 +14,7 @@ export default function SiteHeader() {
       <div className="shell shell-nav">
         <Link className="brand-mark" href="/">
           <span className="brand-dot" />
-          <span>HomeVision</span>
+          <span>Room Vision</span>
         </Link>
 
         <nav className="site-nav" aria-label="Primary">

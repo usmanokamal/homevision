@@ -12,7 +12,7 @@ export default function PrivacyPage() {
           <p className="overline">Privacy</p>
           <h1>Privacy policy</h1>
           <p className="hero-text">
-            This page explains what information Home Vision handles in order to
+            This page explains what information Room Vision handles in order to
             operate accounts, process payments, and retain generation history.
           </p>
         </div>
@@ -22,14 +22,14 @@ export default function PrivacyPage() {
         <div className="shell legal-card reveal-up">
           <h2>Who operates the service</h2>
           <p>
-            Home Vision is operated by Muhammad Usman Kamal in Islamabad,
+            Room Vision is operated by Muhammad Usman Kamal in Islamabad,
             Pakistan. Privacy questions can be sent to{" "}
             <a href="mailto:usmaniskamal@gmail.com">usmaniskamal@gmail.com</a>.
           </p>
 
           <h2>Data collected</h2>
           <p>
-            Home Vision may collect account details such as email address,
+            Room Vision may collect account details such as email address,
             uploaded room images, generated images, credit and payment records,
             guest session identifiers, and basic device or usage information
             needed to protect the service and operate user accounts.
@@ -46,14 +46,14 @@ export default function PrivacyPage() {
 
           <h2>Third-party services</h2>
           <p>
-            Home Vision uses OpenAI for image-generation functionality and Paddle
+            Room Vision uses OpenAI for image-generation functionality and Paddle
             for payment processing. These services may process limited data needed
             to provide their part of the product workflow.
           </p>
 
           <h2>Payments</h2>
           <p>
-            Payments are processed through Paddle. Home Vision stores internal
+            Payments are processed through Paddle. Room Vision stores internal
             purchase records related to credits, payment status, and account
             history, but does not store full payment card information directly.
           </p>
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
 
           <h2>Marketing</h2>
           <p>
-            Home Vision does not currently describe a separate marketing-email
+            Room Vision does not currently describe a separate marketing-email
             program on this site. If that changes, this policy should be updated to
             explain opt-in and opt-out handling.
           </p>

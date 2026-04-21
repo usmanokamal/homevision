@@ -5,7 +5,7 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <div className="shell footer-grid">
         <div>
-          <p className="overline">HomeVision</p>
+          <p className="overline">Room Vision</p>
           <p className="footer-copy">
             Material-swap previews from a single room photo, with accounts,
             credits, saved generations, and review-friendly checkout flow.

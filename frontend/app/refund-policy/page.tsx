@@ -12,7 +12,7 @@ export default function RefundPolicyPage() {
           <p className="overline">Refunds</p>
           <h1>Refund policy</h1>
           <p className="hero-text">
-            This page explains the current refund approach for Home Vision credit
+            This page explains the current refund approach for Room Vision credit
             purchases and billing issues.
           </p>
         </div>
@@ -28,7 +28,7 @@ export default function RefundPolicyPage() {
 
           <h2>Refund requests</h2>
           <p>
-            Refund requests may be granted upon review. Home Vision aims to handle
+            Refund requests may be granted upon review. Room Vision aims to handle
             refund requests fairly, especially in cases involving duplicate
             charges, accidental purchases, billing errors, or unused credits.
           </p>

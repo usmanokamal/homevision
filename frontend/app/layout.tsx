@@ -15,7 +15,7 @@ const bodyFont = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "HomeVision",
+  title: "Room Vision",
   description:
     "Interior material preview studio with credit-based generation, saved history, and separate public product pages.",
 };

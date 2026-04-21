@@ -118,13 +118,13 @@ function getGuestSessionId() {
     return "";
   }
 
-  const existing = window.localStorage.getItem("homevision_guest_session");
+  const existing = window.localStorage.getItem("roomvision_guest_session");
   if (existing) {
     return existing;
   }
 
   const created = window.crypto.randomUUID();
-  window.localStorage.setItem("homevision_guest_session", created);
+  window.localStorage.setItem("roomvision_guest_session", created);
   return created;
 }
 

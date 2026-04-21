@@ -1,6 +1,6 @@
-# HomeVision
+# Room Vision
 
-HomeVision is structured as a small production-style image product rather than a stateless demo.
+Room Vision is structured as a small production-style image product rather than a stateless demo.
 
 It supports:
 
@@ -99,14 +99,14 @@ PADDLE_CHECKOUT_BASE_URL=http://localhost:3000/checkout
 Production database:
 
 ```text
-DATABASE_URL=postgresql+psycopg://user:password@host:5432/homevision
+DATABASE_URL=postgresql+psycopg://user:password@host:5432/roomvision
 ```
 
 Production storage using S3-compatible credentials:
 
 ```text
 STORAGE_BACKEND=s3
-STORAGE_BUCKET_NAME=homevision-assets
+STORAGE_BUCKET_NAME=roomvision-assets
 STORAGE_REGION=auto_or_your_region
 STORAGE_ENDPOINT_URL=https://your-s3-endpoint
 STORAGE_ACCESS_KEY_ID=...

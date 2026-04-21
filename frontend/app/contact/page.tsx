@@ -10,9 +10,9 @@ export default function ContactPage() {
       <section className="subpage-hero">
         <div className="shell narrow-shell reveal-up">
           <p className="overline">Contact</p>
-          <h1>Contact Home Vision</h1>
+          <h1>Contact Room Vision</h1>
           <p className="hero-text">
-            Home Vision is currently operated independently by Muhammad Usman Kamal
+            Room Vision is currently operated independently by Muhammad Usman Kamal
             from Islamabad, Pakistan.
           </p>
         </div>
@@ -24,7 +24,7 @@ export default function ContactPage() {
           <p>Muhammad Usman Kamal</p>
 
           <h2>Brand</h2>
-          <p>Home Vision</p>
+          <p>Room Vision</p>
 
           <h2>Location</h2>
           <p>Islamabad, Pakistan</p>
@@ -36,7 +36,7 @@ export default function ContactPage() {
 
           <h2>Product scope</h2>
           <p>
-            Home Vision currently offers room-image material preview generation,
+            Room Vision currently offers room-image material preview generation,
             credit-based purchases, account history, and regeneration workflows.
           </p>
         </div>

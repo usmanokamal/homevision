@@ -110,14 +110,14 @@ def create_checkout_transaction(user: User, plan: PaymentPlan) -> PaddleCheckout
                     "quantity": 1,
                     "price": {
                         "name": f"{plan.name} credit pack",
-                        "description": f"{plan.credits} HomeVision image credits",
+                        "description": f"{plan.credits} Room Vision image credits",
                         "unit_price": {
                             "amount": str(plan.price_cents),
                             "currency_code": settings.billing_currency.upper(),
                         },
                         "product": {
-                            "name": f"HomeVision {plan.name}",
-                            "description": f"{plan.credits} credits for HomeVision image renders.",
+                            "name": f"Room Vision {plan.name}",
+                            "description": f"{plan.credits} credits for Room Vision image renders.",
                             "tax_category": "standard",
                         },
                     },

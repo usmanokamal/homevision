@@ -45,7 +45,7 @@ export default function HomePage() {
               Show a new finish on the right surface before anyone buys material.
             </h1>
             <p className="hero-text">
-              HomeVision turns a room photo into a controlled material-swap preview.
+              Room Vision turns a room photo into a controlled material-swap preview.
               The current product supports one free guest preview, paid HD generations,
               saved before-and-after history, regeneration, and credit-based checkout.
             </p>

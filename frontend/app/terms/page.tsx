@@ -12,7 +12,7 @@ export default function TermsPage() {
           <p className="overline">Terms</p>
           <h1>Terms and conditions</h1>
           <p className="hero-text">
-            These terms describe the operating rules for Home Vision, including
+            These terms describe the operating rules for Room Vision, including
             accounts, credits, generated previews, and account restrictions.
           </p>
         </div>
@@ -22,7 +22,7 @@ export default function TermsPage() {
         <div className="shell legal-card reveal-up">
           <h2>Operator</h2>
           <p>
-            Home Vision is operated independently by Muhammad Usman Kamal in
+            Room Vision is operated independently by Muhammad Usman Kamal in
             Islamabad, Pakistan. Support inquiries can be sent to{" "}
             <a href="mailto:usmaniskamal@gmail.com">usmaniskamal@gmail.com</a>.
           </p>
@@ -52,7 +52,7 @@ export default function TermsPage() {
 
           <h2>Generated output</h2>
           <p>
-            Home Vision provides design previews only. Final decisions about
+            Room Vision provides design previews only. Final decisions about
             design, materials, purchases, measurements, installation, and
             suitability remain the user&apos;s responsibility.
           </p>

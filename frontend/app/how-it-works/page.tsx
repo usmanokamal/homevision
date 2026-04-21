@@ -33,7 +33,7 @@ export default function HowItWorksPage() {
           <p className="overline">Workflow</p>
           <h1>What the app does, step by step.</h1>
           <p className="hero-text">
-            This is the actual behavior currently implemented in HomeVision. It is a
+            This is the actual behavior currently implemented in Room Vision. It is a
             room-image editing flow with gated guest access, account history, and
             credit-based checkout.
           </p>
