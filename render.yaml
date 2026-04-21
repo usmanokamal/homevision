@@ -1,0 +1,59 @@
+services:
+  - type: web
+    name: room-vision-api
+    runtime: python
+    plan: starter
+    rootDir: backend
+    autoDeploy: true
+    healthCheckPath: /api/health
+    buildCommand: pip install -r requirements.txt
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: BACKEND_PUBLIC_URL
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_IMAGE_MODEL
+        value: gpt-image-1
+      - key: JWT_SECRET
+        sync: false
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAMESITE
+        value: none
+      - key: PADDLE_ENVIRONMENT
+        value: production
+      - key: PADDLE_API_KEY
+        sync: false
+      - key: PADDLE_CLIENT_SIDE_TOKEN
+        sync: false
+      - key: PADDLE_WEBHOOK_SECRET
+        sync: false
+      - key: PADDLE_CHECKOUT_BASE_URL
+        sync: false
+      - key: PADDLE_WEBHOOK_TOLERANCE_SECONDS
+        value: "300"
+      - key: BILLING_CURRENCY
+        value: usd
+      - key: STORAGE_BACKEND
+        value: s3
+      - key: STORAGE_BUCKET_NAME
+        sync: false
+      - key: STORAGE_REGION
+        sync: false
+      - key: STORAGE_ENDPOINT_URL
+        sync: false
+      - key: STORAGE_ACCESS_KEY_ID
+        sync: false
+      - key: STORAGE_SECRET_ACCESS_KEY
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

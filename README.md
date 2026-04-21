@@ -165,6 +165,94 @@ NEXT_PUBLIC_PADDLE_ENV=sandbox
 
 For live deployments, set `NEXT_PUBLIC_PADDLE_ENV=production`.
 
+## Deploying with Vercel + Render
+
+Recommended production split:
+
+- `Vercel` for the Next.js frontend
+- `Render` for the FastAPI backend
+- `Supabase Postgres` for `DATABASE_URL`
+- `Cloudflare R2` or another S3-compatible provider for image storage
+
+### 1. Deploy the frontend to Vercel
+
+In the Vercel dashboard:
+
+1. Import this GitHub repository.
+2. Set the Vercel project `Root Directory` to `frontend`.
+3. Add these environment variables:
+
+```text
+NEXT_PUBLIC_API_BASE_URL=https://api.your-domain.com
+NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=your_live_paddle_client_token
+NEXT_PUBLIC_PADDLE_ENV=production
+```
+
+4. Attach your custom domain, such as `roomvision.com`.
+
+### 2. Deploy the backend to Render
+
+This repo includes a root-level `render.yaml` for the API service.
+
+In the Render dashboard:
+
+1. Connect the GitHub repo.
+2. Create a new `Blueprint` from the repository.
+3. Review the generated `room-vision-api` web service from `render.yaml`.
+4. Fill in all `sync: false` environment variables in the Render dashboard.
+5. Attach a custom domain such as `api.your-domain.com`.
+
+Important backend environment values:
+
+```text
+FRONTEND_ORIGIN=https://your-domain.com
+BACKEND_PUBLIC_URL=https://api.your-domain.com
+DATABASE_URL=postgresql+psycopg://...
+OPENAI_API_KEY=...
+JWT_SECRET=...
+PADDLE_API_KEY=...
+PADDLE_CLIENT_SIDE_TOKEN=...
+PADDLE_WEBHOOK_SECRET=...
+PADDLE_CHECKOUT_BASE_URL=https://your-domain.com/checkout
+STORAGE_BACKEND=s3
+STORAGE_BUCKET_NAME=...
+STORAGE_REGION=...
+STORAGE_ENDPOINT_URL=...
+STORAGE_ACCESS_KEY_ID=...
+STORAGE_SECRET_ACCESS_KEY=...
+ADMIN_EMAIL=...
+ADMIN_PASSWORD=...
+```
+
+The Render service starts with:
+
+```text
+alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+So migrations are applied during deploy.
+
+### 3. Point your Namecheap domain
+
+Recommended DNS layout:
+
+- `your-domain.com` -> Vercel frontend
+- `www.your-domain.com` -> Vercel frontend or redirect to apex
+- `api.your-domain.com` -> Render backend
+
+### 4. Configure Paddle live mode
+
+After both deployments are live:
+
+1. Set `PADDLE_CHECKOUT_BASE_URL` to `https://your-domain.com/checkout`
+2. Create a Paddle webhook endpoint at:
+
+```text
+https://api.your-domain.com/api/billing/paddle-webhook
+```
+
+3. Use your live frontend and API domains when submitting the site for Paddle review.
+
 ## Local URLs
 
 - Frontend: `http://localhost:3000`
