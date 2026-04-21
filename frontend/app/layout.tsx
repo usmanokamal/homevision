@@ -15,9 +15,9 @@ const bodyFont = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "HomeVision Studio",
+  title: "HomeVision",
   description:
-    "Interior image editing with accounts, credits, payments, history, and admin tracking.",
+    "Interior material preview studio with credit-based generation, saved history, and separate public product pages.",
 };
 
 export default function RootLayout({

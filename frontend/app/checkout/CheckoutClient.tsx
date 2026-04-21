@@ -74,7 +74,7 @@ export default function CheckoutClient({
             settings: {
               displayMode: "overlay",
               locale: "en",
-              successUrl: `${window.location.origin}/?checkout=success`,
+              successUrl: `${window.location.origin}/studio?checkout=success`,
               theme: "light",
             },
           },
@@ -98,18 +98,15 @@ export default function CheckoutClient({
         strategy="afterInteractive"
         onLoad={() => setScriptReady(true)}
       />
-      <main className="page-shell">
-        <div className="grid-glow grid-glow-left" />
-        <div className="grid-glow grid-glow-right" />
-        <section className="history-section">
-          <div className="panel-header">
-            <div>
-              <span className="mini-label">Checkout</span>
-              <h2>Open Paddle payment</h2>
+      <main className="site-page checkout-page">
+        <div className="site-noise" />
+        <section className="subpage-hero">
+          <div className="shell narrow-shell reveal-up">
+            <p className="overline">Checkout</p>
+            <h1>Opening Paddle checkout</h1>
+            <div className="legal-card">
+              <p>{status}</p>
             </div>
-          </div>
-          <div className="empty-card">
-            <p>{status}</p>
           </div>
         </section>
       </main>
