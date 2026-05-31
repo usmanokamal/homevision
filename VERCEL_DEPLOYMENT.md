@@ -3,7 +3,7 @@
 This repo is configured for Vercel Services with:
 
 - `frontend` service at route prefix `/`
-- `backend` service at route prefix `/api`
+- `backend` service at route prefix `/backend`
 
 Config file: [`vercel.json`](./vercel.json)
 
@@ -39,7 +39,7 @@ In Vercel project settings, set these for **Production** and **Preview**:
 
 Recommended:
 
-- `NEXT_PUBLIC_API_BASE_URL=/api`
+- `NEXT_PUBLIC_API_BASE_URL=https://<your-domain>/backend`
 
 Alternative:
 
@@ -60,7 +60,7 @@ alembic upgrade head
 ## 5) Validate after deploy
 
 - Frontend: `https://<your-domain>/`
-- Backend health: `https://<your-domain>/api/health`
+- Backend health: `https://<your-domain>/backend/api/health`
 - Studio API calls should hit `/api/...` and succeed.
 
 ## Notes
@@ -68,4 +68,3 @@ alembic upgrade head
 - Do not use local SQLite on Vercel for production.
 - Do not use local filesystem storage for generated images in production.
   Use S3-compatible storage env vars.
-

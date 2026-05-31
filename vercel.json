@@ -9,7 +9,7 @@
     "backend": {
       "root": "backend",
       "entrypoint": "index.py",
-      "routePrefix": "/api"
+      "routePrefix": "/backend"
     }
   }
 }
