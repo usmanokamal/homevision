@@ -14,11 +14,11 @@ const steps = [
   },
   {
     title: "3. Generate the preview",
-    body: "Guests receive one low-quality watermarked preview. Signed-in users spend one credit for each clean generation.",
+    body: "Guests receive one low-quality watermarked preview. Signed-in users can generate clean previews.",
   },
   {
     title: "4. Save, compare, regenerate",
-    body: "Paid generations are stored with before-and-after image history. Regeneration uses the original source image and spends another credit.",
+    body: "Signed-in generations are stored with before-and-after image history. Regeneration uses the original source image.",
   },
 ];
 
@@ -35,7 +35,7 @@ export default function HowItWorksPage() {
           <p className="hero-text">
             This is the actual behavior currently implemented in Room Vision. It is a
             room-image editing flow with gated guest access, account history, and
-            credit-based checkout.
+            no-checkout signed-in usage.
           </p>
         </div>
       </section>
@@ -61,9 +61,9 @@ export default function HowItWorksPage() {
             <p className="overline">Operational rules</p>
             <div className="bullet-stack">
               <p>One guest preview per browser session token.</p>
-              <p>One paid generation consumes one credit.</p>
-              <p>One regeneration also consumes one credit.</p>
-              <p>Admin accounts can review user and payment activity.</p>
+              <p>Signed-in users can generate full previews.</p>
+              <p>Regeneration reuses the original source image.</p>
+              <p>Admin accounts can review user and generation activity.</p>
             </div>
           </div>
 

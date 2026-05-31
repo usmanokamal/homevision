@@ -50,19 +50,6 @@ class Settings:
     cookie_secure = _bool_env("COOKIE_SECURE", False)
     cookie_samesite = os.getenv("COOKIE_SAMESITE", "lax")
 
-    paddle_environment = os.getenv("PADDLE_ENVIRONMENT", "sandbox").strip().lower()
-    paddle_api_key = os.getenv("PADDLE_API_KEY", "")
-    paddle_client_side_token = os.getenv("PADDLE_CLIENT_SIDE_TOKEN", "")
-    paddle_webhook_secret = os.getenv("PADDLE_WEBHOOK_SECRET", "")
-    paddle_checkout_base_url = os.getenv(
-        "PADDLE_CHECKOUT_BASE_URL",
-        f"{frontend_origin.rstrip('/')}/checkout",
-    ).rstrip("/")
-    paddle_webhook_tolerance_seconds = int(
-        os.getenv("PADDLE_WEBHOOK_TOLERANCE_SECONDS", "300")
-    )
-    billing_currency = os.getenv("BILLING_CURRENCY", "usd")
-
     storage_backend = os.getenv("STORAGE_BACKEND", "local").lower()
     storage_bucket_name = os.getenv("STORAGE_BUCKET_NAME", "")
     storage_region = os.getenv("STORAGE_REGION", "")

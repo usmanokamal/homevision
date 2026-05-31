@@ -10,8 +10,8 @@ const featureBlocks = [
     body: "Visitors can try one low-resolution watermarked preview before they need an account.",
   },
   {
-    title: "Credit-based generation",
-    body: "Every paid generation uses one credit. Regenerating a saved image also spends one credit.",
+    title: "Signed-in generation",
+    body: "Guests get one watermarked preview. Signed-in users can generate and regenerate full previews.",
   },
   {
     title: "Stored history",
@@ -19,7 +19,7 @@ const featureBlocks = [
   },
   {
     title: "Admin visibility",
-    body: "Admin users can review users, payments, generation counts, and free-preview usage.",
+    body: "Admin users can review users, generation counts, and free-preview usage.",
   },
 ];
 
@@ -46,8 +46,8 @@ export default function HomePage() {
             </h1>
             <p className="hero-text">
               Room Vision turns a room photo into a controlled material-swap preview.
-              The current product supports one free guest preview, paid HD generations,
-              saved before-and-after history, regeneration, and credit-based checkout.
+              The current product supports one free guest preview, signed-in HD generations,
+              saved before-and-after history, and regeneration.
             </p>
 
             <div className="hero-actions">
@@ -55,7 +55,7 @@ export default function HomePage() {
                 Try the studio
               </Link>
               <Link className="button button-muted" href="/pricing">
-                See credit packs
+                Pricing roadmap
               </Link>
             </div>
 
@@ -65,8 +65,8 @@ export default function HomePage() {
                 <strong>1 free preview</strong>
               </div>
               <div className="rule-chip">
-                <span className="chip-label">Paid</span>
-                <strong>1 credit = 1 image</strong>
+                <span className="chip-label">Signed-in</span>
+                <strong>Unlimited generates</strong>
               </div>
               <div className="rule-chip">
                 <span className="chip-label">History</span>
@@ -78,11 +78,15 @@ export default function HomePage() {
           <div className="hero-visual reveal-up-delayed">
             <div className="hero-frame frame-before">
               <div className="frame-label">Before</div>
-              <div className="image-stage image-stage-before" />
+              <div className="image-stage image-stage-before">
+                <img alt="Original room before redesign" src="/images/room2-before.webp" />
+              </div>
             </div>
             <div className="hero-frame frame-after">
               <div className="frame-label">After</div>
-              <div className="image-stage image-stage-after" />
+              <div className="image-stage image-stage-after">
+                <img alt="Room preview after marble floor and grey walls" src="/images/room2-after.jpg" />
+              </div>
             </div>
             <div className="hero-floating-card">
               <p className="chip-label">Current best-value pack</p>
@@ -100,7 +104,7 @@ export default function HomePage() {
           <span>Separate pricing page</span>
           <span>Guest preview paywall</span>
           <span>Stored generation history</span>
-          <span>Paddle-ready checkout route</span>
+          <span>Checkout disabled for now</span>
         </div>
       </section>
 
@@ -149,7 +153,7 @@ export default function HomePage() {
           <div className="quote-panel reveal-up-delayed">
             <p className="overline">Built for review</p>
             <h2>
-              Pricing, product behavior, checkout flow, and legal pages can now live on
+              Pricing plans and product behavior can now live on
               separate routes instead of being collapsed into one dashboard.
             </h2>
             <div className="quote-actions">

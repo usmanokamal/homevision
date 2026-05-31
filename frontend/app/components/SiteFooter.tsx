@@ -8,22 +8,13 @@ export default function SiteFooter() {
           <p className="overline">Room Vision</p>
           <p className="footer-copy">
             Material-swap previews from a single room photo, with accounts,
-            credits, saved generations, and review-friendly checkout flow.
-          </p>
-          <p className="footer-copy">
-            Operated by Muhammad Usman Kamal, Islamabad, Pakistan. Support:
-            {" "}
-            <a href="mailto:usmaniskamal@gmail.com">usmaniskamal@gmail.com</a>
+            saved generations, and a simple studio workflow.
           </p>
         </div>
 
         <div className="footer-links">
           <Link href="/pricing">Pricing</Link>
           <Link href="/how-it-works">How it works</Link>
-          <Link href="/contact">Contact</Link>
-          <Link href="/terms">Terms</Link>
-          <Link href="/privacy">Privacy</Link>
-          <Link href="/refund-policy">Refund policy</Link>
         </div>
       </div>
     </footer>

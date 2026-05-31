@@ -11,27 +11,6 @@ type User = {
   created_at: string;
 };
 
-type Plan = {
-  id: string;
-  name: string;
-  credits: number;
-  price_cents: number;
-  description: string;
-  featured: boolean;
-  effective_price_per_credit_cents: number;
-};
-
-type Payment = {
-  id: string;
-  plan_id: string;
-  plan_name: string;
-  credits: number;
-  amount_cents: number;
-  currency: string;
-  status: string;
-  created_at: string;
-};
-
 type Generation = {
   id: string;
   target_surface: string;
@@ -55,35 +34,11 @@ type EditResponse = {
   generation?: Generation | null;
 };
 
-type AdminUserSummary = {
-  id: string;
-  email: string;
-  is_admin: boolean;
-  credit_balance: number;
-  created_at: string;
-  total_spend_cents: number;
-  purchased_credits: number;
-  generated_images: number;
-};
-
-type AdminOverview = {
-  total_users: number;
-  total_admins: number;
-  total_generations: number;
-  total_free_previews: number;
-  credits_sold: number;
-  credits_consumed: number;
-  revenue_cents: number;
-  recent_payments: Payment[];
-  recent_users: AdminUserSummary[];
-};
-
 type AuthResponse = {
   user: User;
 };
 
 type Phase = "idle" | "loading" | "done";
-type AuthMode = "signup" | "login";
 
 const SURFACE_OPTIONS = [
   "floor",
@@ -95,16 +50,7 @@ const SURFACE_OPTIONS = [
   "furniture",
 ];
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
-
-function formatMoney(cents: number, currency = "USD") {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(cents / 100);
-}
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -137,10 +83,7 @@ async function readErrorMessage(response: Response) {
 
 export default function StudioPage() {
   const [user, setUser] = useState<User | null>(null);
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [payments, setPayments] = useState<Payment[]>([]);
   const [generations, setGenerations] = useState<Generation[]>([]);
-  const [adminOverview, setAdminOverview] = useState<AdminOverview | null>(null);
 
   const [target, setTarget] = useState("floor");
   const [change, setChange] = useState("matte black tile");
@@ -155,11 +98,6 @@ export default function StudioPage() {
   const [banner, setBanner] = useState("");
   const [paywallMessage, setPaywallMessage] = useState("");
 
-  const [authMode, setAuthMode] = useState<AuthMode>("signup");
-  const [authEmail, setAuthEmail] = useState("");
-  const [authPassword, setAuthPassword] = useState("");
-  const [authBusy, setAuthBusy] = useState(false);
-  const [checkoutPlanId, setCheckoutPlanId] = useState("");
   const [historyBusyId, setHistoryBusyId] = useState("");
 
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -201,33 +139,10 @@ export default function StudioPage() {
   }, [phase]);
 
   useEffect(() => {
-    const checkoutState = new URLSearchParams(window.location.search).get(
-      "checkout"
-    );
-    if (checkoutState === "success") {
-      setBanner("Payment completed. Refreshing your account details.");
-      window.history.replaceState({}, "", "/studio");
-    } else if (checkoutState === "cancelled") {
-      setBanner("Checkout was cancelled. No credits were used.");
-      window.history.replaceState({}, "", "/studio");
-    }
-  }, []);
-
-  useEffect(() => {
     let active = true;
 
     async function bootstrap() {
       try {
-        const plansResponse = await fetch(`${API_BASE_URL}/api/pricing/plans`);
-        if (!plansResponse.ok) {
-          throw new Error(await readErrorMessage(plansResponse));
-        }
-
-        const fetchedPlans = (await plansResponse.json()) as Plan[];
-        if (active) {
-          setPlans(fetchedPlans);
-        }
-
         const meResponse = await fetch(`${API_BASE_URL}/api/auth/me`, {
           credentials: "include",
         });
@@ -261,58 +176,26 @@ export default function StudioPage() {
     if (!nextUser) {
       if (isActive) {
         setGenerations([]);
-        setPayments([]);
-        setAdminOverview(null);
       }
       return;
     }
 
     try {
-      const requests = [
-        fetch(`${API_BASE_URL}/api/generations`, {
-          credentials: "include",
-        }),
-        fetch(`${API_BASE_URL}/api/billing/payments`, {
-          credentials: "include",
-        }),
-      ];
-
-      if (nextUser.is_admin) {
-        requests.push(
-          fetch(`${API_BASE_URL}/api/admin/overview`, {
-            credentials: "include",
-          })
-        );
-      }
-
-      const responses = await Promise.all(requests);
-      const [generationsResponse, paymentsResponse, adminResponse] = responses;
+      const generationsResponse = await fetch(`${API_BASE_URL}/api/generations`, {
+        credentials: "include",
+      });
 
       if (!generationsResponse.ok) {
         throw new Error(await readErrorMessage(generationsResponse));
       }
-      if (!paymentsResponse.ok) {
-        throw new Error(await readErrorMessage(paymentsResponse));
-      }
 
       const nextGenerations = (await generationsResponse.json()) as Generation[];
-      const nextPayments = (await paymentsResponse.json()) as Payment[];
 
       if (!isActive) {
         return;
       }
 
       setGenerations(nextGenerations);
-      setPayments(nextPayments);
-
-      if (nextUser.is_admin && adminResponse) {
-        if (!adminResponse.ok) {
-          throw new Error(await readErrorMessage(adminResponse));
-        }
-        setAdminOverview((await adminResponse.json()) as AdminOverview);
-      } else {
-        setAdminOverview(null);
-      }
     } catch (error) {
       if (!isActive) {
         return;
@@ -340,46 +223,6 @@ export default function StudioPage() {
     setPageError("");
   }
 
-  async function handleAuthSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setAuthBusy(true);
-    setPageError("");
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/${authMode}`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: authEmail,
-          password: authPassword,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(await readErrorMessage(response));
-      }
-
-      const payload = (await response.json()) as AuthResponse;
-      setUser(payload.user);
-      setBanner(
-        authMode === "signup"
-          ? "Account created. You can now buy credits and save renders."
-          : "Signed in."
-      );
-      setPaywallMessage("");
-      await refreshDashboard(payload.user);
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Authentication failed.";
-      setPageError(message);
-    } finally {
-      setAuthBusy(false);
-    }
-  }
-
   async function handleLogout() {
     setPageError("");
 
@@ -390,8 +233,6 @@ export default function StudioPage() {
       });
       setUser(null);
       setGenerations([]);
-      setPayments([]);
-      setAdminOverview(null);
       setBanner("Signed out.");
     } catch {
       setPageError("Sign out failed.");
@@ -450,53 +291,13 @@ export default function StudioPage() {
           "Your free preview is low-resolution and watermarked. Create an account to keep generating."
         );
       } else if (user) {
-        const refreshedUser: User = {
-          ...user,
-          credit_balance: payload.remaining_credits ?? user.credit_balance,
-        };
-        setUser(refreshedUser);
-        await refreshDashboard(refreshedUser);
+        await refreshDashboard(user);
       }
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Image generation failed.";
       setPageError(message);
       setPhase("idle");
-    }
-  }
-
-  async function handleCheckout(planId: string) {
-    if (!user) {
-      setPaywallMessage("Create an account or sign in before buying credits.");
-      setAuthMode("signup");
-      return;
-    }
-
-    setCheckoutPlanId(planId);
-    setPageError("");
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/billing/checkout-link`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ plan_id: planId }),
-      });
-
-      if (!response.ok) {
-        throw new Error(await readErrorMessage(response));
-      }
-
-      const payload = (await response.json()) as { checkout_url: string };
-      window.location.assign(payload.checkout_url);
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unable to start checkout.";
-      setPageError(message);
-    } finally {
-      setCheckoutPlanId("");
     }
   }
 
@@ -537,12 +338,7 @@ export default function StudioPage() {
       const payload = (await response.json()) as EditResponse;
       setResult(payload);
       setPhase("done");
-      const refreshedUser: User = {
-        ...user,
-        credit_balance: payload.remaining_credits ?? user.credit_balance,
-      };
-      setUser(refreshedUser);
-      await refreshDashboard(refreshedUser);
+      await refreshDashboard(user);
       setBanner("Regeneration completed and stored in account history.");
     } catch (error) {
       const message =
@@ -566,10 +362,10 @@ export default function StudioPage() {
         <div className="shell studio-shell">
           <div>
             <p className="overline">Studio</p>
-            <h1>Generate, compare, save, and buy credits.</h1>
+            <h1>Generate, compare, and save design previews.</h1>
             <p className="studio-lead">
               This is the working app. Upload a room photo, change one surface,
-              preview the result, and manage paid usage from the same account.
+              preview the result, and manage saved outputs from the same account.
             </p>
           </div>
 
@@ -577,47 +373,14 @@ export default function StudioPage() {
             <Link className="button button-muted" href="/">
               Public site
             </Link>
-            <Link className="button button-muted" href="/pricing">
-              Pricing
-            </Link>
             {user ? (
               <button className="button button-primary" onClick={handleLogout} type="button">
                 Log out
               </button>
-            ) : (
-              <button
-                className="button button-primary"
-                onClick={() => setAuthMode("signup")}
-                type="button"
-              >
-                Create account
-              </button>
-            )}
+            ) : null}
           </div>
         </div>
       </header>
-
-      <section className="shell studio-shell studio-summary-row">
-        <article className="studio-summary-card reveal-up">
-          <span className="chip-label">Access</span>
-          <strong>{user ? "Signed-in account" : "Guest preview mode"}</strong>
-          <p>
-            {user
-              ? `${user.email} with ${user.credit_balance} credits available.`
-              : "One free low-resolution watermarked preview is available before signup."}
-          </p>
-        </article>
-        <article className="studio-summary-card reveal-up-delayed">
-          <span className="chip-label">Rule</span>
-          <strong>1 credit = 1 generation</strong>
-          <p>Regeneration also spends another credit from the signed-in account.</p>
-        </article>
-        <article className="studio-summary-card reveal-up" style={{ animationDelay: "180ms" }}>
-          <span className="chip-label">Storage</span>
-          <strong>History is persistent</strong>
-          <p>Paid users can revisit stored before-and-after image pairs later.</p>
-        </article>
-      </section>
 
       {banner ? <p className="studio-banner studio-banner-info shell studio-shell">{banner}</p> : null}
       {pageError ? <p className="studio-banner studio-banner-error shell studio-shell">{pageError}</p> : null}
@@ -673,12 +436,12 @@ export default function StudioPage() {
             <p className="chip-label">Prompt rule</p>
             <p>
               The request is applied to the chosen surface only. Guests get one
-              watermarked preview; paid generations are clean and saved to history.
+              watermarked preview; signed-in generations are clean and saved.
             </p>
           </div>
 
           <button className="button button-primary button-wide" type="submit">
-            {user ? "Generate paid preview" : "Generate free preview"}
+            {user ? "Generate full preview" : "Generate free preview"}
           </button>
         </form>
 
@@ -733,117 +496,6 @@ export default function StudioPage() {
         </section>
       </section>
 
-      <section className="shell studio-shell studio-secondary-grid">
-        <article className="studio-panel">
-          <div className="section-head">
-            <div>
-              <p className="chip-label">Account</p>
-              <h2>{user ? "Session and credits" : "Sign up or sign in"}</h2>
-            </div>
-          </div>
-
-          {user ? (
-            <div className="studio-metric-grid">
-              <div className="metric-box">
-                <span className="chip-label">Credits</span>
-                <strong>{user.credit_balance}</strong>
-              </div>
-              <div className="metric-box">
-                <span className="chip-label">Saved generations</span>
-                <strong>{generations.length}</strong>
-              </div>
-              <div className="metric-box">
-                <span className="chip-label">Completed orders</span>
-                <strong>
-                  {
-                    payments.filter((payment) =>
-                      ["completed", "paid"].includes(payment.status)
-                    ).length
-                  }
-                </strong>
-              </div>
-            </div>
-          ) : (
-            <form className="studio-auth-form" onSubmit={handleAuthSubmit}>
-              <div className="segmented-control">
-                <button
-                  className={authMode === "signup" ? "segment active" : "segment"}
-                  onClick={() => setAuthMode("signup")}
-                  type="button"
-                >
-                  Sign up
-                </button>
-                <button
-                  className={authMode === "login" ? "segment active" : "segment"}
-                  onClick={() => setAuthMode("login")}
-                  type="button"
-                >
-                  Sign in
-                </button>
-              </div>
-
-              <label className="input-block">
-                <span>Email</span>
-                <input
-                  onChange={(event) => setAuthEmail(event.target.value)}
-                  type="email"
-                  value={authEmail}
-                />
-              </label>
-
-              <label className="input-block">
-                <span>Password</span>
-                <input
-                  minLength={8}
-                  onChange={(event) => setAuthPassword(event.target.value)}
-                  type="password"
-                  value={authPassword}
-                />
-              </label>
-
-              <button className="button button-primary button-wide" disabled={authBusy} type="submit">
-                {authBusy
-                  ? "Working..."
-                  : authMode === "signup"
-                    ? "Create account"
-                    : "Sign in"}
-              </button>
-            </form>
-          )}
-        </article>
-
-        <article className="studio-panel">
-          <div className="section-head">
-            <div>
-              <p className="chip-label">Pricing</p>
-              <h2>Buy credits</h2>
-            </div>
-            <Link className="button button-muted" href="/pricing">
-              Full pricing page
-            </Link>
-          </div>
-
-          <div className="studio-plan-grid">
-            {plans.map((plan) => (
-              <article className={plan.featured ? "studio-plan featured" : "studio-plan"} key={plan.id}>
-                <span className="chip-label">{plan.name}</span>
-                <h3>{formatMoney(plan.price_cents)}</h3>
-                <p className="studio-plan-credits">{plan.credits} credits</p>
-                <p>{plan.description}</p>
-                <button
-                  className="button button-primary button-wide"
-                  disabled={checkoutPlanId === plan.id}
-                  onClick={() => handleCheckout(plan.id)}
-                  type="button"
-                >
-                  {checkoutPlanId === plan.id ? "Redirecting..." : "Buy credits"}
-                </button>
-              </article>
-            ))}
-          </div>
-        </article>
-      </section>
-
       {user ? (
         <section className="shell studio-shell studio-history-section">
           <div className="section-head">
@@ -855,7 +507,7 @@ export default function StudioPage() {
 
           {generations.length === 0 ? (
             <div className="empty-state">
-              <p>No saved renders yet. Paid generations will appear here.</p>
+              <p>No saved renders yet.</p>
             </div>
           ) : (
             <div className="history-grid-v2">
@@ -894,80 +546,6 @@ export default function StudioPage() {
               ))}
             </div>
           )}
-        </section>
-      ) : null}
-
-      {user ? (
-        <section className="shell studio-shell studio-history-section">
-          <div className="section-head">
-            <div>
-              <p className="chip-label">Billing</p>
-              <h2>Payment log</h2>
-            </div>
-          </div>
-
-          {payments.length === 0 ? (
-            <div className="empty-state">
-              <p>No payment records yet. Purchases confirmed through Paddle appear here.</p>
-            </div>
-          ) : (
-            <div className="table-v2">
-              <div className="table-v2-head">
-                <span>Plan</span>
-                <span>Credits</span>
-                <span>Total</span>
-                <span>Status</span>
-                <span>Date</span>
-              </div>
-              {payments.map((payment) => (
-                <div className="table-v2-row" key={payment.id}>
-                  <span>{payment.plan_name}</span>
-                  <span>{payment.credits}</span>
-                  <span>{formatMoney(payment.amount_cents, payment.currency.toUpperCase())}</span>
-                  <span>{payment.status}</span>
-                  <span>{formatDate(payment.created_at)}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      ) : null}
-
-      {user?.is_admin && adminOverview ? (
-        <section className="shell studio-shell studio-history-section">
-          <div className="section-head">
-            <div>
-              <p className="chip-label">Admin</p>
-              <h2>Operational overview</h2>
-            </div>
-          </div>
-
-          <div className="studio-metric-grid studio-metric-grid-admin">
-            <div className="metric-box">
-              <span className="chip-label">Revenue</span>
-              <strong>{formatMoney(adminOverview.revenue_cents)}</strong>
-            </div>
-            <div className="metric-box">
-              <span className="chip-label">Users</span>
-              <strong>{adminOverview.total_users}</strong>
-            </div>
-            <div className="metric-box">
-              <span className="chip-label">Generations</span>
-              <strong>{adminOverview.total_generations}</strong>
-            </div>
-            <div className="metric-box">
-              <span className="chip-label">Free previews</span>
-              <strong>{adminOverview.total_free_previews}</strong>
-            </div>
-            <div className="metric-box">
-              <span className="chip-label">Credits sold</span>
-              <strong>{adminOverview.credits_sold}</strong>
-            </div>
-            <div className="metric-box">
-              <span className="chip-label">Credits consumed</span>
-              <strong>{adminOverview.credits_consumed}</strong>
-            </div>
-          </div>
         </section>
       ) : null}
 

@@ -13,11 +13,10 @@ export default function PricingPage() {
       <section className="subpage-hero">
         <div className="shell narrow-shell reveal-up">
           <p className="overline">Pricing</p>
-          <h1>Credit packs for one-off renders or steady iteration.</h1>
+          <h1>Pricing is paused while checkout is disabled.</h1>
           <p className="hero-text">
-            One credit generates one image. Free guest output is limited to one
-            watermarked preview, and paid generations unlock saved history and
-            regeneration inside the studio.
+            Free guest output is limited to one watermarked preview. Signed-in
+            accounts can currently generate and regenerate without payment.
           </p>
         </div>
       </section>
@@ -37,10 +36,10 @@ export default function PricingPage() {
                 <p>{plan.description}</p>
                 <div className="price-meta">
                   <span>{(plan.priceCents / plan.credits).toFixed(0)} cents / credit</span>
-                  <span>One-time purchase</span>
+                  <span>Planned one-time purchase</span>
                 </div>
                 <Link className="button button-primary" href="/studio">
-                  Open studio to buy
+                  Open studio
                 </Link>
               </article>
             ))}
@@ -52,27 +51,27 @@ export default function PricingPage() {
         <div className="shell split-panel">
           <div className="process-panel reveal-up">
             <p className="overline">Included</p>
-            <h2>What a paid credit actually unlocks.</h2>
+            <h2>Current access behavior.</h2>
             <div className="bullet-stack">
-              <p>HD generation without the guest watermark.</p>
+              <p>HD generation without the guest watermark when signed in.</p>
               <p>Saved before-and-after images on the signed-in account.</p>
-              <p>Regeneration from earlier source images using another credit.</p>
-              <p>Payment history visible inside the account dashboard.</p>
+              <p>Regeneration from earlier source images.</p>
+              <p>Payment gateway integration is temporarily disabled.</p>
             </div>
           </div>
 
           <div className="quote-panel reveal-up-delayed">
-            <p className="overline">Need review pages?</p>
+            <p className="overline">Current setup</p>
             <h2>
-              The site now has separate pricing, workflow, privacy, terms, and refund
-              routes for deployment and Paddle review.
+              Pricing is displayed for planning, while the active experience is in the
+              studio workflow.
             </h2>
             <div className="quote-actions">
-              <Link className="button button-primary" href="/terms">
-                Terms
+              <Link className="button button-primary" href="/studio">
+                Open studio
               </Link>
-              <Link className="button button-muted" href="/refund-policy">
-                Refund policy
+              <Link className="button button-muted" href="/how-it-works">
+                View workflow
               </Link>
             </div>
           </div>

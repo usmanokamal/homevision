@@ -8,10 +8,6 @@ class AuthRequest(BaseModel):
     password: str = Field(min_length=8, max_length=128)
 
 
-class CheckoutLinkRequest(BaseModel):
-    plan_id: str
-
-
 class RegenerateRequest(BaseModel):
     target: str | None = Field(default=None, max_length=120)
     change: str | None = Field(default=None, max_length=255)
@@ -41,17 +37,6 @@ class PlanSummary(BaseModel):
     effective_price_per_credit_cents: float
 
 
-class PaymentSummary(BaseModel):
-    id: str
-    plan_id: str
-    plan_name: str
-    credits: int
-    amount_cents: int
-    currency: str
-    status: str
-    created_at: datetime
-
-
 class GenerationSummary(BaseModel):
     id: str
     target_surface: str
@@ -75,11 +60,6 @@ class EditResponse(BaseModel):
     generation: GenerationSummary | None = None
 
 
-class CheckoutLinkResponse(BaseModel):
-    transaction_id: str
-    checkout_url: str
-
-
 class AdminUserSummary(BaseModel):
     id: str
     email: str
@@ -99,5 +79,4 @@ class AdminOverview(BaseModel):
     credits_sold: int
     credits_consumed: int
     revenue_cents: int
-    recent_payments: list[PaymentSummary]
     recent_users: list[AdminUserSummary]

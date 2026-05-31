@@ -1,5 +1,4 @@
 import base64
-import json
 import os
 from contextlib import asynccontextmanager
 from io import BytesIO
@@ -40,24 +39,14 @@ from .image_processing import (
     build_edit_prompt,
     to_data_url,
 )
-from .models import CreditTransaction, Generation, GuestSession, Payment, User
-from .payments import (
-    apply_completed_transaction,
-    create_checkout_transaction,
-    get_payment_plan,
-    list_payment_plans,
-    verify_paddle_webhook_signature,
-)
+from .models import CreditTransaction, Generation, GuestSession, User
 from .schemas import (
     AdminOverview,
     AdminUserSummary,
     AuthRequest,
     AuthResponse,
-    CheckoutLinkRequest,
-    CheckoutLinkResponse,
     EditResponse,
     GenerationSummary,
-    PaymentSummary,
     PlanSummary,
     RegenerateRequest,
     UserSummary,
@@ -308,25 +297,6 @@ def create_generation_record(
     return generation
 
 
-def charge_generation_credit(db: Session, user: User, generation: Generation) -> None:
-    if user.credit_balance <= 0:
-        raise HTTPException(
-            status_code=402,
-            detail="No credits remaining. Buy a credit pack to continue.",
-        )
-
-    user.credit_balance -= 1
-    db.add(
-        CreditTransaction(
-            user_id=user.id,
-            generation_id=generation.id,
-            delta=-1,
-            reason="generation",
-            description=f"Used 1 credit for generation {generation.id}.",
-        )
-    )
-
-
 def execute_generation_flow(
     db: Session,
     image_bytes: bytes,
@@ -349,16 +319,11 @@ def execute_generation_flow(
         if guest_session.has_used_free_preview:
             raise HTTPException(
                 status_code=402,
-                detail="Your free preview is already used. Create an account and buy credits to continue.",
+                detail="Your free preview is already used. Create an account or sign in to continue.",
             )
         quality_mode = "free-preview"
         watermarked = True
         is_free_preview = True
-    elif owner.credit_balance <= 0:
-        raise HTTPException(
-            status_code=402,
-            detail="No credits remaining. Buy a credit pack to continue.",
-        )
 
     generated_bytes, generated_content_type = run_openai_edit(
         image_bytes=image_bytes,
@@ -389,9 +354,6 @@ def execute_generation_flow(
         is_free_preview=is_free_preview,
     )
 
-    if owner is not None:
-        charge_generation_credit(db, owner, generation)
-
     return generation, image_bytes, generated_bytes
 
 
@@ -402,7 +364,7 @@ async def healthcheck() -> dict[str, str]:
 
 @app.get("/api/pricing/plans", response_model=list[PlanSummary])
 async def get_pricing_plans() -> list[PlanSummary]:
-    return [serialize_plan(plan) for plan in list_payment_plans()]
+    return [serialize_plan(plan) for plan in settings.payment_plans]
 
 
 @app.post("/api/auth/signup", response_model=AuthResponse)
@@ -468,68 +430,6 @@ async def list_generations(
         .all()
     )
     return [serialize_generation(generation, current_user) for generation in generations]
-
-
-@app.get("/api/billing/payments", response_model=list[PaymentSummary])
-async def list_payments(
-    current_user: Annotated[User, Depends(require_current_user)],
-    db: Annotated[Session, Depends(get_db)],
-) -> list[PaymentSummary]:
-    payments = (
-        db.query(Payment)
-        .filter(Payment.user_id == current_user.id)
-        .order_by(Payment.created_at.desc())
-        .limit(50)
-        .all()
-    )
-    return [
-        PaymentSummary(
-            id=payment.id,
-            plan_id=payment.plan_id,
-            plan_name=payment.plan_name,
-            credits=payment.credits,
-            amount_cents=payment.amount_cents,
-            currency=payment.currency,
-            status=payment.status,
-            created_at=payment.created_at,
-        )
-        for payment in payments
-    ]
-
-
-@app.post("/api/billing/checkout-link", response_model=CheckoutLinkResponse)
-async def create_checkout(
-    payload: CheckoutLinkRequest,
-    current_user: Annotated[User, Depends(require_current_user)],
-) -> CheckoutLinkResponse:
-    plan = get_payment_plan(payload.plan_id)
-    checkout = create_checkout_transaction(current_user, plan)
-    return CheckoutLinkResponse(
-        transaction_id=checkout.transaction_id,
-        checkout_url=checkout.checkout_url,
-    )
-
-
-@app.post("/api/billing/paddle-webhook")
-async def paddle_webhook(
-    request: Request,
-    db: Annotated[Session, Depends(get_db)],
-) -> dict[str, bool]:
-    payload = await request.body()
-    signature = request.headers.get("Paddle-Signature")
-
-    verify_paddle_webhook_signature(payload, signature)
-
-    try:
-        event = json.loads(payload.decode("utf-8"))
-    except Exception as exc:
-        raise HTTPException(status_code=400, detail=f"Invalid Paddle webhook payload: {exc}") from exc
-
-    if event.get("event_type") == "transaction.completed":
-        apply_completed_transaction(db, event["data"])
-        db.commit()
-
-    return {"received": True}
 
 
 @app.post("/api/edit-image", response_model=EditResponse)
@@ -676,37 +576,12 @@ async def admin_overview(
             or 0
         )
     )
-    revenue_cents = (
-        db.query(func.coalesce(func.sum(Payment.amount_cents), 0))
-        .filter(Payment.status.in_(["completed", "paid"]))
-        .scalar()
-        or 0
-    )
-
-    recent_payments_query = db.query(Payment).order_by(Payment.created_at.desc()).limit(10).all()
-    recent_payments = [
-        PaymentSummary(
-            id=payment.id,
-            plan_id=payment.plan_id,
-            plan_name=payment.plan_name,
-            credits=payment.credits,
-            amount_cents=payment.amount_cents,
-            currency=payment.currency,
-            status=payment.status,
-            created_at=payment.created_at,
-        )
-        for payment in recent_payments_query
-    ]
+    revenue_cents = 0
 
     recent_users_query = db.query(User).order_by(User.created_at.desc()).limit(10).all()
     recent_users: list[AdminUserSummary] = []
     for user in recent_users_query:
-        total_spend_cents = (
-            db.query(func.coalesce(func.sum(Payment.amount_cents), 0))
-            .filter(Payment.user_id == user.id, Payment.status.in_(["completed", "paid"]))
-            .scalar()
-            or 0
-        )
+        total_spend_cents = 0
         purchased_credits = (
             db.query(func.coalesce(func.sum(CreditTransaction.delta), 0))
             .filter(
@@ -743,6 +618,5 @@ async def admin_overview(
         credits_sold=credits_sold,
         credits_consumed=credits_consumed,
         revenue_cents=revenue_cents,
-        recent_payments=recent_payments,
         recent_users=recent_users,
     )

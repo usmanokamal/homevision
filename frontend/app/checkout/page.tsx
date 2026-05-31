@@ -1,25 +1,24 @@
-import CheckoutClient from "./CheckoutClient";
+import Link from "next/link";
 
-type CheckoutPageProps = {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-};
-
-function getSingleParam(
-  value: string | string[] | undefined,
-): string {
-  if (Array.isArray(value)) {
-    return value[0] ?? "";
-  }
-  return value ?? "";
-}
-
-export default async function CheckoutPage({
-  searchParams,
-}: CheckoutPageProps) {
-  const resolvedSearchParams = searchParams ? await searchParams : {};
-  const transactionId =
-    getSingleParam(resolvedSearchParams._ptxn) ||
-    getSingleParam(resolvedSearchParams.ptxn);
-
-  return <CheckoutClient transactionId={transactionId} />;
+export default function CheckoutPage() {
+  return (
+    <main className="site-page checkout-page">
+      <div className="site-noise" />
+      <section className="subpage-hero">
+        <div className="shell narrow-shell reveal-up">
+          <p className="overline">Checkout</p>
+          <h1>Checkout is disabled</h1>
+          <div className="legal-card">
+            <p>
+              Payment gateway integration is temporarily removed. Continue using the studio
+              without checkout.
+            </p>
+            <Link className="button button-primary" href="/studio">
+              Return to studio
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }

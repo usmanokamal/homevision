@@ -27,20 +27,6 @@ services:
         value: "true"
       - key: COOKIE_SAMESITE
         value: none
-      - key: PADDLE_ENVIRONMENT
-        value: production
-      - key: PADDLE_API_KEY
-        sync: false
-      - key: PADDLE_CLIENT_SIDE_TOKEN
-        sync: false
-      - key: PADDLE_WEBHOOK_SECRET
-        sync: false
-      - key: PADDLE_CHECKOUT_BASE_URL
-        sync: false
-      - key: PADDLE_WEBHOOK_TOLERANCE_SECONDS
-        value: "300"
-      - key: BILLING_CURRENCY
-        value: usd
       - key: STORAGE_BACKEND
         value: s3
       - key: STORAGE_BUCKET_NAME
