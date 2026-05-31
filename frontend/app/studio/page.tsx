@@ -50,10 +50,22 @@ const SURFACE_OPTIONS = [
   "furniture",
 ];
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ??
-  process.env.NEXT_PUBLIC_BACKEND_URL ??
-  "http://localhost:8000";
+function resolveApiBaseUrl() {
+  const configured =
+    process.env.NEXT_PUBLIC_API_BASE_URL ??
+    process.env.NEXT_PUBLIC_BACKEND_URL ??
+    "http://localhost:8000";
+  const trimmed = configured.trim().replace(/\/+$/, "");
+  if (!trimmed || trimmed === "/api") {
+    return "";
+  }
+  if (trimmed.endsWith("/api")) {
+    return trimmed.slice(0, -4);
+  }
+  return trimmed;
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-US", {

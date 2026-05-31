@@ -8,8 +8,23 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR: Final[Path] = Path(__file__).resolve().parents[1]
-DATA_DIR: Final[Path] = BASE_DIR / "data"
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _resolve_data_dir() -> Path:
+    configured = os.getenv("DATA_DIR")
+    candidate = Path(configured) if configured else (BASE_DIR / "data")
+    try:
+        candidate.mkdir(parents=True, exist_ok=True)
+        return candidate
+    except OSError:
+        # Vercel functions cannot write under /var/task. Fall back to /tmp for
+        # temporary runtime storage when persistent infra is not configured yet.
+        fallback = Path("/tmp/homevision-data")
+        fallback.mkdir(parents=True, exist_ok=True)
+        return fallback
+
+
+DATA_DIR: Final[Path] = _resolve_data_dir()
 
 
 def _bool_env(name: str, default: bool) -> bool:

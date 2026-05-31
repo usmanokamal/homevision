@@ -38,6 +38,11 @@ def ensure_schema_ready() -> None:
     inspector = inspect(engine)
     existing_tables = set(inspector.get_table_names())
     missing_tables = REQUIRED_TABLES.difference(existing_tables)
+    if missing_tables and settings.database_url.startswith("sqlite") and "/tmp/" in settings.database_url:
+        Base.metadata.create_all(bind=engine)
+        inspector = inspect(engine)
+        existing_tables = set(inspector.get_table_names())
+        missing_tables = REQUIRED_TABLES.difference(existing_tables)
     if missing_tables:
         missing = ", ".join(sorted(missing_tables))
         raise RuntimeError(
