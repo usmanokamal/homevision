@@ -178,13 +178,12 @@ def run_openai_edit(
     if current_extension.lower() != expected_extension:
         filename = f"{safe_base}{expected_extension}"
 
-    image_stream = BytesIO(image_bytes)
-    image_stream.name = filename or "upload.png"
+    upload_payload = (filename or "upload.jpg", image_bytes, image_content_type)
 
     try:
         result = get_openai_client().images.edit(
             model=settings.openai_image_model,
-            image=image_stream,
+            image=upload_payload,
             prompt=prompt,
             input_fidelity="high" if quality_mode != "free-preview" else "low",
             quality="medium" if quality_mode != "free-preview" else "low",
