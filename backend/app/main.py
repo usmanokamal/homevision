@@ -163,9 +163,21 @@ def get_or_create_guest_session(db: Session, guest_session_token: str) -> GuestS
 def run_openai_edit(
     image_bytes: bytes,
     filename: str,
+    image_content_type: str,
     prompt: str,
     quality_mode: str,
 ) -> tuple[bytes, str]:
+    extension_by_type = {
+        "image/jpeg": ".jpg",
+        "image/png": ".png",
+        "image/webp": ".webp",
+    }
+    expected_extension = extension_by_type.get(image_content_type.lower(), ".jpg")
+    base_name, current_extension = os.path.splitext(filename or "upload")
+    safe_base = base_name or "upload"
+    if current_extension.lower() != expected_extension:
+        filename = f"{safe_base}{expected_extension}"
+
     image_stream = BytesIO(image_bytes)
     image_stream.name = filename or "upload.png"
 
@@ -337,6 +349,7 @@ def execute_generation_flow(
     generated_bytes, generated_content_type = run_openai_edit(
         image_bytes=image_bytes,
         filename=image_filename,
+        image_content_type=image_content_type,
         prompt=prompt,
         quality_mode=quality_mode,
     )
