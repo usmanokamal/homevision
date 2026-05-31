@@ -35,7 +35,7 @@ This gives you a practical split:
 
 ## Product rules implemented
 
-1. Guests can generate exactly one free preview.
+1. Guests can generate exactly two free previews.
 2. That guest preview is low-quality and watermarked.
 3. Signed-in users spend `1` credit for each generation.
 4. Regenerating a saved image also spends `1` credit.

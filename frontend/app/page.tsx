@@ -7,11 +7,11 @@ import { formatMoney, marketingPlans } from "./lib/plans";
 const featureBlocks = [
   {
     title: "One guest preview",
-    body: "Visitors can try one low-resolution watermarked preview before they need an account.",
+    body: "Visitors can try two low-resolution watermarked previews before they need an account.",
   },
   {
     title: "Signed-in generation",
-    body: "Guests get one watermarked preview. Signed-in users can generate and regenerate full previews.",
+    body: "Guests get two watermarked previews. Signed-in users can generate and regenerate full previews.",
   },
   {
     title: "Stored history",
@@ -46,7 +46,7 @@ export default function HomePage() {
             </h1>
             <p className="hero-text">
               Room Vision turns a room photo into a controlled material-swap preview.
-              The current product supports one free guest preview, signed-in HD generations,
+              The current product supports two free guest previews, signed-in HD generations,
               saved before-and-after history, and regeneration.
             </p>
 
@@ -62,7 +62,7 @@ export default function HomePage() {
             <div className="rule-strip">
               <div className="rule-chip">
                 <span className="chip-label">Guest</span>
-                <strong>1 free preview</strong>
+                <strong>2 free previews</strong>
               </div>
               <div className="rule-chip">
                 <span className="chip-label">Signed-in</span>

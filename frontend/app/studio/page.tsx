@@ -288,7 +288,7 @@ export default function StudioPage() {
 
       if (payload.is_guest_preview) {
         setBanner(
-          "Your free preview is low-resolution and watermarked. Create an account to keep generating."
+          "Your free preview is low-resolution and watermarked. You have 2 free tries total before signup."
         );
       } else if (user) {
         await refreshDashboard(user);
@@ -353,6 +353,10 @@ export default function StudioPage() {
   const activeBeforeImage = result?.before_image_data_url ?? previewUrl;
   const activeAfterImage = result?.after_image_data_url ?? "";
   const freePreviewUsed = !!result?.is_guest_preview;
+  const isGenerating = phase === "loading";
+  const selectedFileLabel = file
+    ? `${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`
+    : "No file selected yet";
 
   return (
     <main className="studio-page">
@@ -395,20 +399,37 @@ export default function StudioPage() {
               <p className="chip-label">Generator</p>
               <h2>Build a new preview</h2>
             </div>
-            <button className="button button-muted" onClick={resetComposer} type="button">
+            <button
+              className="button button-muted"
+              disabled={isGenerating}
+              onClick={resetComposer}
+              type="button"
+            >
               Reset
             </button>
           </div>
 
-          <label className="input-block">
+          <div className="input-block">
             <span>Room photo</span>
+            <div className="file-input-row">
+              <button
+                className="button button-primary file-upload-trigger"
+                disabled={isGenerating}
+                onClick={() => inputRef.current?.click()}
+                type="button"
+              >
+                Upload image
+              </button>
+              <span className="file-upload-meta">{selectedFileLabel}</span>
+            </div>
             <input
               ref={inputRef}
               accept="image/png,image/jpeg,image/webp"
+              className="sr-only-file-input"
               onChange={handleFileChange}
               type="file"
             />
-          </label>
+          </div>
 
           <label className="input-block">
             <span>Surface to edit</span>
@@ -435,13 +456,17 @@ export default function StudioPage() {
           <div className="studio-note">
             <p className="chip-label">Prompt rule</p>
             <p>
-              The request is applied to the chosen surface only. Guests get one
-              watermarked preview; signed-in generations are clean and saved.
+              The request is applied to the chosen surface only. Guests get two
+              watermarked previews; signed-in generations are clean and saved.
             </p>
           </div>
 
-          <button className="button button-primary button-wide" type="submit">
-            {user ? "Generate full preview" : "Generate free preview"}
+          <button className="button button-primary button-wide" disabled={isGenerating} type="submit">
+            {isGenerating
+              ? "Generating..."
+              : user
+                ? "Generate full preview"
+                : "Generate free preview"}
           </button>
         </form>
 

@@ -14,7 +14,7 @@ const steps = [
   },
   {
     title: "3. Generate the preview",
-    body: "Guests receive one low-quality watermarked preview. Signed-in users can generate clean previews.",
+    body: "Guests receive two low-quality watermarked previews. Signed-in users can generate clean previews.",
   },
   {
     title: "4. Save, compare, regenerate",
@@ -60,7 +60,7 @@ export default function HowItWorksPage() {
           <div className="process-panel reveal-up">
             <p className="overline">Operational rules</p>
             <div className="bullet-stack">
-              <p>One guest preview per browser session token.</p>
+              <p>Two guest previews per browser session token.</p>
               <p>Signed-in users can generate full previews.</p>
               <p>Regeneration reuses the original source image.</p>
               <p>Admin accounts can review user and generation activity.</p>

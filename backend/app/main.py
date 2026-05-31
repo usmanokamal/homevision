@@ -316,10 +316,19 @@ def execute_generation_flow(
     if owner is None:
         if guest_session is None:
             raise HTTPException(status_code=400, detail="Guest session is required.")
-        if guest_session.has_used_free_preview:
+        free_preview_count = (
+            db.query(func.count(Generation.id))
+            .filter(
+                Generation.guest_session_id == guest_session.id,
+                Generation.is_free_preview.is_(True),
+            )
+            .scalar()
+            or 0
+        )
+        if free_preview_count >= 2:
             raise HTTPException(
                 status_code=402,
-                detail="Your free preview is already used. Create an account or sign in to continue.",
+                detail="Your 2 free previews are already used. Create an account or sign in to continue.",
             )
         quality_mode = "free-preview"
         watermarked = True
